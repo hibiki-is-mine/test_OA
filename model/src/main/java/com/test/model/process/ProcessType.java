@@ -10,6 +10,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
+
 @ApiModel(description = "ProcessType")
 @TableName("oa_process_type")
 public class ProcessType extends BaseEntity {
