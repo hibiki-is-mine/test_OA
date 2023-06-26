@@ -2,12 +2,14 @@ package com.test.oa.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.test.model.system.SysRole;
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Mapper;
+
 
 /**
  * @return
  */
-@Repository
+@Mapper
+
 public interface SysRoleMapper extends BaseMapper<SysRole> {
 
 }

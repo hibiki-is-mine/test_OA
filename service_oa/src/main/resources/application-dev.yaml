@@ -5,3 +5,11 @@ spring:
     username: root
     password: 230672409
     url: jdbc:mysql://localhost:3306/oa?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 查看日志

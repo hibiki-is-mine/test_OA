@@ -6,9 +6,13 @@ import com.test.model.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 
 @Data
+@Setter
+@Getter
 @ApiModel(description = "角色")
 @TableName("sys_role")
 public class SysRole extends BaseEntity {
