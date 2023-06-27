@@ -1,12 +1,16 @@
 package com.test.oa;
 
+import com.test.model.system.SysMenu;
 import com.test.model.system.SysRole;
+import com.test.oa.mapper.SysMenuMapper;
 import com.test.oa.mapper.SysRoleMapper;
 import com.test.oa.service.SysRoleService;
+import com.test.oa.untils.MenuHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +22,8 @@ public class ServiceTest {
     SysRoleMapper sysRoleMapper;
     @Autowired
     SysRoleService sysRoleService;
+    @Autowired
+    SysMenuMapper sysMenuMapper;
 
     @Test
     public void SysRoleMapperGetAll(){
@@ -29,11 +35,15 @@ public class ServiceTest {
     }
     @Test
     public void saveTest(){
-        SysRole sysRole =  new SysRole();
-        sysRole.setRoleName("testsave");
-        sysRole.setRoleCode("6");
-        sysRole.setId(14L);
-        boolean save = sysRoleService.updateById(sysRole);
-        System.out.println(save);
+        List<Integer> list= new ArrayList<>();
+        list.add(12);
+    }
+    @Test
+    public void treeTest(){
+        List<SysMenu> sysMenuList = sysMenuMapper.selectList(null);
+        List<SysMenu> sysMenuTree = MenuHelper.buildTree(sysMenuList);
+        for (SysMenu s: sysMenuTree){
+            System.out.println(s);
+        }
     }
 }
