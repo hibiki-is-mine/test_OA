@@ -7,4 +7,5 @@ import com.test.model.system.SysUser;
  * @return
  */
 public interface SysUserService extends IService<SysUser> {
+    boolean updateStatus(Integer userId, Integer status);
 }

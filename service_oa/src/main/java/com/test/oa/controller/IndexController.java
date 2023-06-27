@@ -1,6 +1,7 @@
 package com.test.oa.controller;
 
 import com.test.common.result.Result;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import java.util.Map;
 /**
  * @return
  */
+@Api("用户登录")
 @RestController
 @RequestMapping("/admin/system/index")
 public class IndexController {

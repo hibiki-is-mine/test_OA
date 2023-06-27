@@ -6,17 +6,22 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.test.common.result.Result;
 import com.test.model.system.SysRole;
 import com.test.oa.service.SysRoleService;
+import com.test.vo.system.AssginRoleVo;
 import com.test.vo.system.SysRoleQueryVo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @return
  */
+@Api("角色管理")
 @RestController
 @RequestMapping("/admin/system/sysRole")
 public class SysRoleController {
@@ -92,6 +97,18 @@ public class SysRoleController {
             return Result.success();
         }
         else return Result.fail();
+    }
+    @ApiOperation("根据用户获取角色数据")
+    @GetMapping("toAssign/{userId}")
+    public Result toAssign(@PathVariable Long userId){
+        Map<String,Object> map = sysRoleService.getRoleByUserId(userId);
+        return Result.success(map);
+    }
+    @ApiOperation("根据用户分配角色")
+    @PostMapping("doAssign")
+    public Result doAssign(@RequestBody AssginRoleVo assginRoleVo){
+        sysRoleService.doAssign(assginRoleVo);
+        return Result.success();
     }
 }
 

@@ -1,12 +1,12 @@
 package com.test.oa.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.test.model.system.SysUser;
+import com.test.model.system.SysUserRole;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
  * @return
  */
 @Mapper
-public interface SysUserMapper extends BaseMapper<SysUser> {
+public interface SysUserRoleMapper extends BaseMapper<SysUserRole> {
 }
