@@ -4,6 +4,7 @@ import com.test.common.result.Result;
 import com.test.model.system.SysMenu;
 import com.test.oa.service.SysMenuService;
 import com.test.oa.service.SysRoleService;
+import com.test.vo.system.AssginMenuVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,18 @@ public class SysMenuController {
         }else return Result.fail().message("不能删除");
 
     }
+    @ApiOperation("根据角色id查询Menu")
+    @GetMapping("toAssign/{roleId}")
+    public Result getMenusByRoleId(@PathVariable Long roleId){
 
+        List<SysMenu> menuList = sysMenuService.getMenusByRoleId(roleId);
+        return Result.success(menuList);
+    }
+    @ApiOperation(value = "给角色分配权限")
+    @PostMapping("/doAssign")
+    public Result doAssign(@RequestBody AssginMenuVo assignMenuVo) {
+        sysMenuService.doAssign(assignMenuVo);
+        return Result.success();
+    }
 
 }

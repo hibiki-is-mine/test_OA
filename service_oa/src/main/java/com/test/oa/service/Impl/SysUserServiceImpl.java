@@ -1,5 +1,6 @@
 package com.test.oa.service.Impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.test.model.system.SysUser;
 import com.test.oa.mapper.SysUserMapper;
@@ -18,5 +19,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         sysUser.setStatus(status);
         int i = baseMapper.updateById(sysUser);
         return i == 1;
+    }
+
+    @Override
+    public SysUser getUserByUserName(String username) {
+
+        LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysUser::getUsername,username);
+        return baseMapper.selectOne(wrapper);
     }
 }

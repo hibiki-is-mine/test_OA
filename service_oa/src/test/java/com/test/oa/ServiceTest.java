@@ -4,6 +4,7 @@ import com.test.model.system.SysMenu;
 import com.test.model.system.SysRole;
 import com.test.oa.mapper.SysMenuMapper;
 import com.test.oa.mapper.SysRoleMapper;
+import com.test.oa.service.SysMenuService;
 import com.test.oa.service.SysRoleService;
 import com.test.oa.untils.MenuHelper;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,8 @@ public class ServiceTest {
     SysRoleService sysRoleService;
     @Autowired
     SysMenuMapper sysMenuMapper;
+    @Autowired
+    SysMenuService sysMenuService;
 
     @Test
     public void SysRoleMapperGetAll(){
@@ -44,6 +47,13 @@ public class ServiceTest {
         List<SysMenu> sysMenuTree = MenuHelper.buildTree(sysMenuList);
         for (SysMenu s: sysMenuTree){
             System.out.println(s);
+        }
+    }
+    @Test
+    public void selectMenuByRoleId(){
+        List<SysMenu> menuList = sysMenuService.getMenusByRoleId(10L);
+        for (SysMenu m: menuList){
+            System.out.println(m);
         }
     }
 }

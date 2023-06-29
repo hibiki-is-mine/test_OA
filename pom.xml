@@ -14,6 +14,7 @@
         <module>common/service-util</module>
         <module>model</module>
         <module>service_oa</module>
+        <module>common/spring-security</module>
     </modules>
 
     <parent>

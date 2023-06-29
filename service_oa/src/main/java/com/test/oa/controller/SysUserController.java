@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.errorprone.annotations.Var;
 import com.test.common.result.Result;
+import com.test.common.utils.MD5Util;
 import com.test.model.system.SysUser;
 import com.test.model.system.SysUser;
 import com.test.oa.service.SysUserRoleService;
@@ -64,6 +65,10 @@ public class SysUserController {
     @ApiOperation("添加角色")
     @PostMapping("save")
     public Result save(@RequestBody SysUser sysUser){
+        //通过MD5对密码进行加密
+        String password = sysUser.getPassword();
+        sysUser.setPassword(MD5Util.getMD5(password));
+
         boolean is_success = sysUserService.save(sysUser);
         if (is_success){
             return Result.success();

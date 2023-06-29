@@ -8,4 +8,6 @@ import com.test.model.system.SysUser;
  */
 public interface SysUserService extends IService<SysUser> {
     boolean updateStatus(Integer userId, Integer status);
+
+    SysUser getUserByUserName(String username);
 }
