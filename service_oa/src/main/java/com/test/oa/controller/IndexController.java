@@ -31,9 +31,12 @@ public class IndexController {
     @Autowired
     SysMenuService sysMenuService;
 
+
     /**
      * 登录
-     * @return
+     *
+     * @param loginVo 登录签证官
+     * @return {@link Result}
      */
     @PostMapping("login")
     public Result login(@RequestBody LoginVo loginVo) {

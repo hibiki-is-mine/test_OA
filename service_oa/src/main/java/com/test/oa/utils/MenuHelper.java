@@ -1,4 +1,4 @@
-package com.test.oa.untils;
+package com.test.oa.utils;
 
 import com.test.model.system.SysMenu;
 import com.test.vo.system.MetaVo;

@@ -1,14 +1,16 @@
 package com.test.security.custom;
 
 import com.test.model.system.SysUser;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
 
-/**
- * @return
- */
+@Getter
+@Setter
 public class CustomUser extends User {
     private SysUser sysUser;
 

@@ -7,15 +7,13 @@ import com.test.model.system.SysRoleMenu;
 import com.test.oa.mapper.SysMenuMapper;
 import com.test.oa.mapper.SysRoleMenuMapper;
 import com.test.oa.service.SysMenuService;
-import com.test.oa.untils.MenuHelper;
+import com.test.oa.utils.MenuHelper;
 import com.test.vo.system.AssginMenuVo;
 import com.test.vo.system.RouterVo;
-import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

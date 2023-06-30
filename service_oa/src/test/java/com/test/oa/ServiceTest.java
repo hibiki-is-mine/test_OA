@@ -6,7 +6,7 @@ import com.test.oa.mapper.SysMenuMapper;
 import com.test.oa.mapper.SysRoleMapper;
 import com.test.oa.service.SysMenuService;
 import com.test.oa.service.SysRoleService;
-import com.test.oa.untils.MenuHelper;
+import com.test.oa.utils.MenuHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
