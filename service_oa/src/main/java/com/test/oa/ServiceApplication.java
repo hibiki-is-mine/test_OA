@@ -10,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @return
  */
 @SpringBootApplication
-@ComponentScan("com.test")
+@ComponentScan("com.test.*")
 public class ServiceApplication {
     public static void main(String[] args){
         SpringApplication.run(ServiceApplication.class,args);
