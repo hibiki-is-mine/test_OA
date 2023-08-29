@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
-@Component
+@Service
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private SysUserService sysUserService;

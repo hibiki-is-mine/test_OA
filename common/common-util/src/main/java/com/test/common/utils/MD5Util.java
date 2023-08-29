@@ -13,11 +13,11 @@ public final class MD5Util {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] messageDigest = md.digest(input.getBytes());
             BigInteger no = new BigInteger(1, messageDigest);
-            String hashtext = no.toString(16);
-            while (hashtext.length() < 32) {
-                hashtext = "0" + hashtext;
+            String hashText = no.toString(16);
+            while (hashText.length() < 32) {
+                hashText = "0" + hashText;
             }
-            return hashtext;
+            return hashText;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
