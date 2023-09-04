@@ -1,19 +1,17 @@
 package com.test.security.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.test.common.jwt.JwtHelper;
-import com.test.common.utils.ResponseUtil;
 import com.test.common.result.Result;
-import com.test.common.result.ResultCodeEnum;
+import com.test.common.utils.ResponseUtil;
 import com.test.security.custom.CustomUser;
 import com.test.vo.system.LoginVo;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -22,68 +20,73 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TokenLoginFilter extends UsernamePasswordAuthenticationFilter {
+public class TokenLoginFilter  extends UsernamePasswordAuthenticationFilter {
+
 
     private RedisTemplate redisTemplate;
     //构造方法
-    public TokenLoginFilter(AuthenticationManager authenticationManager,
-                            RedisTemplate redisTemplate) {
-        this.setAuthenticationManager(authenticationManager);
+    public TokenLoginFilter(AuthenticationManager authentication
+            ,RedisTemplate redisTemplate){
+        this.setAuthenticationManager(authentication);
         this.setPostOnly(false);
-        //指定登录接口及提交方式，可以指定任意路径
-        this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/admin/system/index/login","POST"));
-        this.redisTemplate = redisTemplate;
+        //设置登录接口
+        this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/admin/system/index","POST"));
+        this.redisTemplate = new RedisTemplate<>();
     }
 
-    //登录认证
-    //获取输入的用户名和密码，调用方法认证
+    /**
+     * 尝试验证
+     *
+     * @param request  请求
+     * @param response 响应
+     * @return {@link Authentication}
+     *///重写登录验证过程
+    @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
-                                                HttpServletResponse response)
-            throws AuthenticationException {
+                                                HttpServletResponse response){
         try {
-            //获取用户信息
+            //通过流获取request中的LoginVo对象
             LoginVo loginVo = new ObjectMapper().readValue(request.getInputStream(), LoginVo.class);
-            //封装对象
-            Authentication authenticationToken =
-                    new UsernamePasswordAuthenticationToken(loginVo.getUsername(), loginVo.getPassword());
-            //调用方法
-            return this.getAuthenticationManager().authenticate(authenticationToken);
+
+            //封装UsernamePasswordAuthenticationToken对象
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginVo.getUsername(), loginVo.getPassword());
+            //调用SpringSecurity认证方法
+            return  this.getAuthenticationManager().authenticate(authenticationToken);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-
-    //认证成功调用方法
+    //认证成功的方法
+    @Override
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
                                             FilterChain chain,
-                                            Authentication auth)
+                                            Authentication authResult)
             throws IOException, ServletException {
-        //获取当前用户
-        CustomUser customUser = (CustomUser)auth.getPrincipal();
+        //获取当前认证用户对象
+        CustomUser user = (CustomUser) authResult.getPrincipal();
         //生成token
-        String token = JwtHelper.createToken(customUser.getSysUser().getId(),
-                customUser.getSysUser().getUsername());
+        String token = JwtHelper.createToken(user.getSysUser().getId(), user.getSysUser().getUsername());
 
-        //获取当前用户权限数据，放到Redis里面 key：username   value：权限数据
-        redisTemplate.opsForValue().set(customUser.getUsername(),
-                JSON.toJSONString(customUser.getAuthorities()));
-
-        //返回
+        //获取用户权限数据，以json的形式放入Redis
+        redisTemplate.opsForValue().set(user.getUsername(),
+                JSON.toJSONString(user.getAuthorities())
+                );
         Map<String,Object> map = new HashMap<>();
         map.put("token",token);
         ResponseUtil.out(response, Result.success(map));
-    }
 
-    //认证失败调用方法
+    }
+    //认证失败的方法
+    @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request,
                                               HttpServletResponse response,
                                               AuthenticationException failed)
             throws IOException, ServletException {
-        ResponseUtil.out(response,Result.build(null, ResultCodeEnum.LOGIN_ERROR));
+        ResponseUtil.out(response,Result.fail());
     }
+
 }

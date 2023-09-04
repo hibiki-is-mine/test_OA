@@ -2,10 +2,9 @@ package com.test.security.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.test.common.jwt.JwtHelper;
-import com.test.common.utils.ResponseUtil;
 import com.test.common.result.Result;
 import com.test.common.result.ResultCodeEnum;
-import com.test.security.custom.LoginUserInfoHelper;
+import com.test.common.utils.ResponseUtil;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,13 +27,20 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private RedisTemplate redisTemplate;
 
     public TokenAuthenticationFilter(RedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
+        this.redisTemplate=redisTemplate;
     }
 
+    /**
+     * @param request
+     * @param response
+     * @param chain
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        logger.info("uri:"+request.getRequestURI());
         //如果是登录接口，直接放行
         if("/admin/system/index/login".equals(request.getRequestURI())) {
             chain.doFilter(request, response);
@@ -46,35 +52,40 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
         } else {
-            ResponseUtil.out(response, Result.build(null, ResultCodeEnum.LOGIN_ERROR));
+            ResponseUtil.out(response, Result.build(null, ResultCodeEnum.PERMISSION));
         }
     }
 
+    /**
+     * 判断请求头是否具有token
+     *
+     * @param request 请求
+     * @return {@link UsernamePasswordAuthenticationToken}
+     */
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        //请求头是否有token
+        // token置于header里
         String token = request.getHeader("token");
-        if(!StringUtils.isEmpty(token)) {
+        logger.info("token:"+token);
+        if (!StringUtils.isEmpty(token)) {
+            //不为空则表示已经登录
             String username = JwtHelper.getUsername(token);
-            if(!StringUtils.isEmpty(username)) {
-                //当前用户信息放到ThreadLocal里面
-                LoginUserInfoHelper.setUserId(JwtHelper.getUserId(token));
-                LoginUserInfoHelper.setUsername(username);
-
-                //通过username从redis获取权限数据
-                String authString = (String)redisTemplate.opsForValue().get(username);
-                //把redis获取字符串权限数据转换要求集合类型 List<SimpleGrantedAuthority>
-                if(!StringUtils.isEmpty(authString)) {
-                    List<Map> maplist = JSON.parseArray(authString, Map.class);
-                    System.out.println(maplist);
-                    List<SimpleGrantedAuthority> authList = new ArrayList<>();
-                    for (Map map:maplist) {
-                        String authority = (String)map.get("authority");
-                        authList.add(new SimpleGrantedAuthority(authority));
+            logger.info("username:"+username);
+            if (!StringUtils.isEmpty(username)) {
+                //认成功后获取权限数据
+                String auth = (String) redisTemplate.opsForValue().get(username);
+                //将redis湖区字符串放入集合中
+                if (!StringUtils.isEmpty(auth)){
+                    List<Map> list = JSON.parseArray(auth, Map.class);
+                    List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                    for (Map m: list
+                         ) {
+                        authorities.add(new SimpleGrantedAuthority((String)m.get("authority")));
                     }
-                    return new UsernamePasswordAuthenticationToken(username,null, authList);
-                } else {
-                    return new UsernamePasswordAuthenticationToken(username,null, new ArrayList<>());
+                    return new UsernamePasswordAuthenticationToken(username, null, authorities);
                 }
+                else return new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+
+
             }
         }
         return null;

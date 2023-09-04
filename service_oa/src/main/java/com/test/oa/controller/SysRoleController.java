@@ -11,6 +11,7 @@ import com.test.vo.system.SysRoleQueryVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +36,7 @@ public class SysRoleController {
     }
     @ApiOperation("条件分页查询")
     @GetMapping("{page}/{limit}")
+    @PreAuthorize("hasAuthority('bnt.sysRole.list')")
     public Result getWithPage(@PathVariable Long limit,
                               @PathVariable Long page,
                               SysRoleQueryVo sysRoleQueryVo){
@@ -54,6 +56,7 @@ public class SysRoleController {
 
     @ApiOperation("添加角色")
     @PostMapping("save")
+    @PreAuthorize("hasAuthority('bnt.sysRole.add')")
     public Result save(@RequestBody  SysRole sysRole){
         boolean is_success = sysRoleService.save(sysRole);
         if (is_success){
@@ -63,13 +66,14 @@ public class SysRoleController {
     }
     @ApiOperation("根据ID查询")
     @GetMapping("get/{id}")
-
+    @PreAuthorize("hasAuthority('bnt.sysRole.list')")
     public Result get(@PathVariable Long id){
         SysRole sysRole = sysRoleService.getById(id);
         return Result.success(sysRole);
     }
     @ApiOperation("修改角色")
     @PutMapping("update")
+    @PreAuthorize("hasAuthority('bnt.sysRole.update')")
     public Result update(@RequestBody SysRole sysRole){
 
         boolean is_success = sysRoleService.updateById(sysRole);
@@ -81,6 +85,8 @@ public class SysRoleController {
 
     @ApiOperation("根据ID删除角色")
     @DeleteMapping("delete/{id}")
+    @PreAuthorize("hasAuthority('bnt.sysRole.remove')")
+
     public Result delete(@PathVariable Long id){
         boolean is_success = sysRoleService.removeById(id);
         if (is_success){
@@ -91,6 +97,7 @@ public class SysRoleController {
 
     @ApiOperation("根据ID批量删除角色")
     @DeleteMapping("batchDelete")
+    @PreAuthorize("hasAuthority('bnt.sysRole.remove')")
     public Result batchDelete(@RequestBody List<Long> list){
         boolean is_success = sysRoleService.removeByIds(list);
         if (is_success){
