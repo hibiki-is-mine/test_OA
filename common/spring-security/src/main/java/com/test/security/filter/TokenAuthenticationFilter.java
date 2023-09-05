@@ -5,6 +5,7 @@ import com.test.common.jwt.JwtHelper;
 import com.test.common.result.Result;
 import com.test.common.result.ResultCodeEnum;
 import com.test.common.utils.ResponseUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -38,9 +39,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
      * @throws ServletException
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-        logger.info("uri:"+request.getRequestURI());
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain) throws ServletException, IOException {
         //如果是登录接口，直接放行
         if("/admin/system/index/login".equals(request.getRequestURI())) {
             chain.doFilter(request, response);
@@ -52,7 +53,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
         } else {
-            ResponseUtil.out(response, Result.build(null, ResultCodeEnum.PERMISSION));
+            ResponseUtil.out(response, Result.build(null, ResultCodeEnum.LOGIN_ERROR));
         }
     }
 
@@ -78,7 +79,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                     List<Map> list = JSON.parseArray(auth, Map.class);
                     List<SimpleGrantedAuthority> authorities = new ArrayList<>();
                     for (Map m: list
-                         ) {
+                    ) {
                         authorities.add(new SimpleGrantedAuthority((String)m.get("authority")));
                     }
                     return new UsernamePasswordAuthenticationToken(username, null, authorities);

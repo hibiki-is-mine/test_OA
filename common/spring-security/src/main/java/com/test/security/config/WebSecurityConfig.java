@@ -26,13 +26,13 @@ import org.springframework.web.cors.CorsUtils;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
     private UserDetailsService userDetailsService;
 
     @Autowired
     private CustomMd5PasswordEncoder customMd5PasswordEncoder;
-
-    @Autowired
-    private RedisTemplate redisTemplate;
 
     @Bean
     @Override
@@ -68,6 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 指定UserDetailService和加密器
         auth.userDetailsService(userDetailsService).passwordEncoder(customMd5PasswordEncoder);
     }
+
 
     /**
      * 配置哪些请求不拦截

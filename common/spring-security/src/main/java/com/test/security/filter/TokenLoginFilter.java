@@ -7,6 +7,8 @@ import com.test.common.result.Result;
 import com.test.common.utils.ResponseUtil;
 import com.test.security.custom.CustomUser;
 import com.test.vo.system.LoginVo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.AccessType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,7 +27,6 @@ import java.util.Map;
 
 public class TokenLoginFilter  extends UsernamePasswordAuthenticationFilter {
 
-
     private RedisTemplate redisTemplate;
     //构造方法
     public TokenLoginFilter(AuthenticationManager authentication
@@ -34,7 +35,7 @@ public class TokenLoginFilter  extends UsernamePasswordAuthenticationFilter {
         this.setPostOnly(false);
         //设置登录接口
         this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/admin/system/index","POST"));
-        this.redisTemplate = new RedisTemplate<>();
+        this.redisTemplate = redisTemplate;
     }
 
     /**
@@ -64,21 +65,22 @@ public class TokenLoginFilter  extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
                                             FilterChain chain,
-                                            Authentication authResult)
+                                            Authentication auth)
             throws IOException, ServletException {
-        //获取当前认证用户对象
-        CustomUser user = (CustomUser) authResult.getPrincipal();
+        //获取当前用户
+        CustomUser customUser = (CustomUser)auth.getPrincipal();
         //生成token
-        String token = JwtHelper.createToken(user.getSysUser().getId(), user.getSysUser().getUsername());
+        String token = JwtHelper.createToken(customUser.getSysUser().getId(),
+                customUser.getSysUser().getUsername());
 
-        //获取用户权限数据，以json的形式放入Redis
-        redisTemplate.opsForValue().set(user.getUsername(),
-                JSON.toJSONString(user.getAuthorities())
-                );
+        //获取当前用户权限数据，放到Redis里面 key：username   value：权限数据
+        redisTemplate.opsForValue().set(customUser.getUsername(),
+                JSON.toJSONString(customUser.getAuthorities()));
+
+        //返回
         Map<String,Object> map = new HashMap<>();
         map.put("token",token);
         ResponseUtil.out(response, Result.success(map));
-
     }
     //认证失败的方法
     @Override

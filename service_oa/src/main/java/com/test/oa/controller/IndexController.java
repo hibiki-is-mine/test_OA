@@ -74,7 +74,7 @@ public class IndexController {
      * @return
      */
     @GetMapping("info")
-    public Result info(@RequestHeader("header") String token) {//从请求头中获取用户信息
+    public Result info(@RequestHeader("token") String token) {//从请求头中获取用户信息
 /*      map.put("roles","[admin]");
         map.put("name","admin");
         map.put("avatar","https://oss.aliyuncs.com/aliyun_id_photo_bucket/default_handsome.jpg");

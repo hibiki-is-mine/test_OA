@@ -11,7 +11,7 @@ public class RedisTest {
     StringRedisTemplate redisTemplate;
     @Test
     public void test(){
-        redisTemplate.opsForValue().set("testk1","testv1");
+        redisTemplate.opsForValue().set("testk2","testv2");
 
     }
 }
