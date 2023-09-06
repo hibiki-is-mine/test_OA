@@ -1,13 +1,13 @@
-package com.test.oa.service.Impl;
+package com.test.oa.auth.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.test.model.system.SysMenu;
 import com.test.model.system.SysRoleMenu;
-import com.test.oa.mapper.SysMenuMapper;
-import com.test.oa.mapper.SysRoleMenuMapper;
-import com.test.oa.service.SysMenuService;
-import com.test.oa.utils.MenuHelper;
+import com.test.oa.auth.mapper.SysMenuMapper;
+import com.test.oa.auth.mapper.SysRoleMenuMapper;
+import com.test.oa.auth.service.SysMenuService;
+import com.test.oa.auth.utils.MenuHelper;
 import com.test.vo.system.AssginMenuVo;
 import com.test.vo.system.RouterVo;
 import org.springframework.beans.factory.annotation.Autowired;

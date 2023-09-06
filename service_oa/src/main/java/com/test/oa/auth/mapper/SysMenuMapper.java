@@ -1,4 +1,4 @@
-package com.test.oa.mapper;
+package com.test.oa.auth.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.test.model.system.SysMenu;

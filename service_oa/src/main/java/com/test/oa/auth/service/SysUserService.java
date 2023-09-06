@@ -1,4 +1,4 @@
-package com.test.oa.service;
+package com.test.oa.auth.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.test.model.system.SysUser;

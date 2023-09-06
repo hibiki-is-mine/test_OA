@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @return
  */
 @Configuration
-@MapperScan("com.test.*.mapper")
+@MapperScan("com.test.oa.*.mapper")
 public class MybatisPlusConfig {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {

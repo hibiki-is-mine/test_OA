@@ -1,13 +1,12 @@
-package com.test.oa.controller;
+package com.test.oa.auth.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.test.common.jwt.JwtHelper;
 import com.test.common.result.Result;
 import com.test.common.utils.MD5Util;
-import com.test.model.system.SysMenu;
 import com.test.model.system.SysUser;
-import com.test.oa.service.SysMenuService;
-import com.test.oa.service.SysUserService;
+import com.test.oa.auth.service.SysMenuService;
+import com.test.oa.auth.service.SysUserService;
 import com.test.vo.system.LoginVo;
 import com.test.vo.system.RouterVo;
 import io.swagger.annotations.Api;

@@ -1,8 +1,8 @@
-package com.test.oa.service.Impl;
+package com.test.oa.auth.service.Impl;
 
 import com.test.model.system.SysUser;
-import com.test.oa.service.SysMenuService;
-import com.test.oa.service.SysUserService;
+import com.test.oa.auth.service.SysMenuService;
+import com.test.oa.auth.service.SysUserService;
 import com.test.security.custom.CustomUser;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +10,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service

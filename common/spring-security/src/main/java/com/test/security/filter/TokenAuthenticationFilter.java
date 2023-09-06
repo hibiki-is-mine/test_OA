@@ -5,7 +5,6 @@ import com.test.common.jwt.JwtHelper;
 import com.test.common.result.Result;
 import com.test.common.result.ResultCodeEnum;
 import com.test.common.utils.ResponseUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -1,11 +1,10 @@
-package com.test.oa.controller;
+package com.test.oa.auth.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.test.common.result.Result;
 import com.test.model.system.SysRole;
-import com.test.oa.service.SysRoleService;
+import com.test.oa.auth.service.SysRoleService;
 import com.test.vo.system.AssginRoleVo;
 import com.test.vo.system.SysRoleQueryVo;
 import io.swagger.annotations.Api;
@@ -15,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

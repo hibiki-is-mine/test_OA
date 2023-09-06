@@ -1,4 +1,4 @@
-package com.test.oa.utils;
+package com.test.oa.auth.utils;
 
 import com.test.model.system.SysMenu;
 import com.test.vo.system.MetaVo;

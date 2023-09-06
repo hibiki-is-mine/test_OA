@@ -1,9 +1,8 @@
-package com.test.oa.controller;
+package com.test.oa.auth.controller;
 
 import com.test.common.result.Result;
 import com.test.model.system.SysMenu;
-import com.test.oa.service.SysMenuService;
-import com.test.oa.service.SysRoleService;
+import com.test.oa.auth.service.SysMenuService;
 import com.test.vo.system.AssginMenuVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

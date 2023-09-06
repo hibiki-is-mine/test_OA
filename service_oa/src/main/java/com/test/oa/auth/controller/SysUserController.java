@@ -1,15 +1,13 @@
-package com.test.oa.controller;
+package com.test.oa.auth.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.google.errorprone.annotations.Var;
 import com.test.common.result.Result;
 import com.test.common.utils.MD5Util;
 import com.test.model.system.SysUser;
-import com.test.model.system.SysUser;
-import com.test.oa.service.SysUserRoleService;
-import com.test.oa.service.SysUserService;
+import com.test.oa.auth.service.SysUserRoleService;
+import com.test.oa.auth.service.SysUserService;
 import com.test.vo.system.SysUserQueryVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
