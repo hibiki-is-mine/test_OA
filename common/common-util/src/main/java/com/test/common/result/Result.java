@@ -32,6 +32,9 @@ public class Result<T> {
     public static <T> Result<T> fail(){
         return build(null,ResultCodeEnum.FAIL);
     }
+    public static <T> Result<T> fail(T data){
+        return build(data,ResultCodeEnum.FAIL);
+    }
 
     public Result<T> message(String message){
        this.setMessage(message);

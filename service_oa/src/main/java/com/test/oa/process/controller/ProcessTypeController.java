@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/admin/process/processType")
 public class ProcessTypeController {
@@ -23,7 +25,7 @@ public class ProcessTypeController {
      * @param limit
      * @return {@link Result}
      */
-    @PreAuthorize("hasAuthority('bnt.processType.list')")
+    //@PreAuthorize("hasAuthority('bnt.processType.list')")
     @ApiOperation(value = "分页查询")
     @GetMapping("{page}/{limit}")
     public Result list(@PathVariable Long page,
@@ -39,7 +41,7 @@ public class ProcessTypeController {
      * @param id
      * @return {@link Result}
      */
-    @PreAuthorize("hasAuthority('bnt.processType.list')")
+    //@PreAuthorize("hasAuthority('bnt.processType.list')")
     @ApiOperation(value = "根据ID查询")
     @GetMapping("get/{id}")
     public Result get(@PathVariable Long id){
@@ -52,7 +54,7 @@ public class ProcessTypeController {
      * @param processType
      * @return {@link Result}
      */
-    @PreAuthorize("hasAuthority('bnt.processType.add')")
+    //@PreAuthorize("hasAuthority('bnt.processType.add')")
     @ApiOperation(value = "添加")
     @PostMapping("save")
     public Result add(@RequestBody ProcessType processType){
@@ -66,7 +68,7 @@ public class ProcessTypeController {
      * @param processType
      * @return {@link Result}
      */
-    @PreAuthorize("hasAuthority('bnt.processType.update')")
+    //@PreAuthorize("hasAuthority('bnt.processType.update')")
     @ApiOperation(value = "修改")
     @PutMapping("update")
     public Result update(@RequestBody ProcessType processType){
@@ -79,12 +81,18 @@ public class ProcessTypeController {
      * @param id
      * @return {@link Result}
      */
-    @PreAuthorize("hasAuthority('bnt.processType.remove')")
+    //@PreAuthorize("hasAuthority('bnt.processType.remove')")
     @ApiOperation(value = "删除")
     @DeleteMapping("remove/{id}")
     public Result remove(@PathVariable Long id){
         processTypeService.removeById(id);
         return Result.success();
+    }
+    @ApiOperation(value = "查询所有审批分类")
+    @GetMapping("findAll")
+    public Result findAll(){
+        List<ProcessType> list = processTypeService.list();
+        return Result.success(list);
     }
 
 }
