@@ -11,5 +11,17 @@ import com.test.vo.process.ProcessVo;
  * @return
  */
 public interface ProcessService extends IService<Process> {
+    /**
+     * 获取审查列表
+     * @param pageParam
+     * @param processQueryVo
+     * @return {@link IPage}<{@link ProcessVo}>
+     */
     IPage<ProcessVo> selectPage(Page<ProcessVo> pageParam, ProcessQueryVo processQueryVo);
+
+    /**
+     * 部署activiti流程
+     * @param deployPath
+     */
+    void deployByZip(String deployPath);
 }

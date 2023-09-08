@@ -21,7 +21,7 @@ public class getPageTest {
         IPage<ProcessTemplate> processTemplateIPage = processTemplateService.selectPage(pageParam);
         IPage<ProcessTemplate> processTemplateIPage2 = processTemplateService.selectPage2(pageParam);
 
-        System.out.println("if processTemplateIPage equals processTemplateIPage2" + processTemplateIPage.equals(processTemplateIPage2));
+        System.out.println("if processTemplateIPage equals processTemplateIPage2 ： " + processTemplateIPage.equals(processTemplateIPage2));
 
     }
 }

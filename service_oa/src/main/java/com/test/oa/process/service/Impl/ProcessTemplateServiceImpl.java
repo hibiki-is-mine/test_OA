@@ -8,9 +8,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.test.model.process.ProcessTemplate;
 import com.test.model.process.ProcessType;
 import com.test.oa.process.mapper.ProcessTemplateMapper;
+import com.test.oa.process.service.ProcessService;
 import com.test.oa.process.service.ProcessTemplateService;
 import com.test.oa.process.service.ProcessTypeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -24,6 +27,8 @@ public class ProcessTemplateServiceImpl extends ServiceImpl<ProcessTemplateMappe
 
     @Resource
     private ProcessTypeService processTypeService;
+    @Autowired
+    private ProcessService processService;
 
     @Override
     public IPage<ProcessTemplate> selectPage2(Page<ProcessTemplate> pageParam) {
@@ -52,8 +57,14 @@ public class ProcessTemplateServiceImpl extends ServiceImpl<ProcessTemplateMappe
 
     @Override
     public void publish(Long id) {
+        //修改模板的状态值，1表示已发布
         ProcessTemplate processTemplate = baseMapper.selectById(id);
         processTemplate.setStatus(1);
         baseMapper.updateById(processTemplate);
+        //调用processService中的deployByZip方法部署流程
+        if (StringUtils.isEmpty(processTemplate.getProcessDefinitionPath())){
+            processService.deployByZip(processTemplate.getProcessDefinitionPath());
+        }
+
     }
 }
