@@ -8,21 +8,22 @@
         1.mapper接口的全类名和映射文件namespace保持一致
         2.mapper接口中的方法的方法名要和映射文件中的sql的id保持一致
     -->
-    <resultMap id="menuMap" type="com.test.model.system.SysMenu" autoMapping="true">
 
-    </resultMap>
-    <sql id="columns">
-        m.id,m.parent_id,m.name,m.type,m.path,m.component,m.perms,m.icon,m.sort_value,m.status,m.create_time,m.update_time,m.is_deleted
-    </sql>
-    <select id="getMenuByUserId" resultMap="menuMap">
-        select distinct <include refid="columns"/>
-        from sys_menu m
-        inner join sys_role_menu rm on rm.menu_id = m.id
-        inner join sys_user_role ur on ur.role_id = rm.role_id
-        where ur.user_id = #{userId}
-        and m.is_deleted = 0
-        and ur.is_deleted = 0
-        and rm.is_deleted = 0
-        and m.status = 1
+    <select id="selectPage" resultType="com.test.model.process.ProcessTemplate">
+        SELECT
+        p.`name`,
+        p.icon_url,
+        p.process_type_id,
+        p.form_props,
+        p.form_options,
+        p.description,
+        p.process_definition_key,
+        p.process_definition_path,
+        p.process_model_id,
+        p.`status`,
+        pty.`name` AS processTypeName
+        FROM
+        oa_process_template p
+        LEFT JOIN	 oa_process_type pty on pty.id = p.process_type_id
     </select>
 </mapper>

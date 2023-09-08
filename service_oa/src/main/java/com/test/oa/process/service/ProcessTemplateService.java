@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 public interface ProcessTemplateService extends IService<ProcessTemplate> {
 
+    IPage<ProcessTemplate> selectPage2(Page<ProcessTemplate> pageParam);
+
     IPage<ProcessTemplate> selectPage(Page<ProcessTemplate> pageParam);
 
     void publish(Long id);

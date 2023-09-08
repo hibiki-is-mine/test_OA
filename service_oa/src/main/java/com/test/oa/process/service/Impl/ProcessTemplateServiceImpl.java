@@ -26,13 +26,13 @@ public class ProcessTemplateServiceImpl extends ServiceImpl<ProcessTemplateMappe
     private ProcessTypeService processTypeService;
 
     @Override
-    public IPage<ProcessTemplate> selectPage(Page<ProcessTemplate> pageParam) {
+    public IPage<ProcessTemplate> selectPage2(Page<ProcessTemplate> pageParam) {
         LambdaQueryWrapper<ProcessTemplate> queryWrapper = new LambdaQueryWrapper<ProcessTemplate>();
         queryWrapper.orderByDesc(ProcessTemplate::getId);
         IPage<ProcessTemplate> page = processTemplateMapper.selectPage(pageParam, queryWrapper);
         List<ProcessTemplate> processTemplateList = page.getRecords();
 
-        List<Long> processTypeIdList = processTemplateList.stream().map(processTemplate -> processTemplate.getProcessTypeId()).collect(Collectors.toList());
+        List<Long> processTypeIdList = processTemplateList.stream().map(ProcessTemplate::getProcessTypeId).collect(Collectors.toList());
 
         if(!CollectionUtils.isEmpty(processTypeIdList)) {
             Map<Long, ProcessType> processTypeIdToProcessTypeMap = processTypeService.list(new LambdaQueryWrapper<ProcessType>().in(ProcessType::getId, processTypeIdList)).stream().collect(Collectors.toMap(ProcessType::getId, ProcessType -> ProcessType));
@@ -43,6 +43,11 @@ public class ProcessTemplateServiceImpl extends ServiceImpl<ProcessTemplateMappe
             }
         }
         return page;
+    }
+
+    @Override
+    public IPage<ProcessTemplate> selectPage(Page<ProcessTemplate> pageParam) {
+        return baseMapper.selectPage(pageParam);
     }
 
     @Override
