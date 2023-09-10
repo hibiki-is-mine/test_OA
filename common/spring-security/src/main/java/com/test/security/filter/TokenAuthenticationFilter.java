@@ -5,6 +5,7 @@ import com.test.common.jwt.JwtHelper;
 import com.test.common.result.Result;
 import com.test.common.result.ResultCodeEnum;
 import com.test.common.utils.ResponseUtil;
+import com.test.security.custom.LoginUserInfoHelper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -63,29 +64,30 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
      * @return {@link UsernamePasswordAuthenticationToken}
      */
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        // token置于header里
+        //请求头是否有token
         String token = request.getHeader("token");
-        logger.info("token:"+token);
-        if (!StringUtils.isEmpty(token)) {
-            //不为空则表示已经登录
+        if(!StringUtils.isEmpty(token)) {
             String username = JwtHelper.getUsername(token);
-            logger.info("username:"+username);
-            if (!StringUtils.isEmpty(username)) {
-                //认成功后获取权限数据
-                String auth = (String) redisTemplate.opsForValue().get(username);
-                //将redis湖区字符串放入集合中
-                if (!StringUtils.isEmpty(auth)){
-                    List<Map> list = JSON.parseArray(auth, Map.class);
-                    List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                    for (Map m: list
-                    ) {
-                        authorities.add(new SimpleGrantedAuthority((String)m.get("authority")));
+            if(!StringUtils.isEmpty(username)) {
+                //当前用户信息放到ThreadLocal里面
+                LoginUserInfoHelper.setUserId(JwtHelper.getUserId(token));
+                LoginUserInfoHelper.setUsername(username);
+
+                //通过username从redis获取权限数据
+                String authString = (String)redisTemplate.opsForValue().get(username);
+                //把redis获取字符串权限数据转换要求集合类型 List<SimpleGrantedAuthority>
+                if(!StringUtils.isEmpty(authString)) {
+                    List<Map> maplist = JSON.parseArray(authString, Map.class);
+                    System.out.println(maplist);
+                    List<SimpleGrantedAuthority> authList = new ArrayList<>();
+                    for (Map map:maplist) {
+                        String authority = (String)map.get("authority");
+                        authList.add(new SimpleGrantedAuthority(authority));
                     }
-                    return new UsernamePasswordAuthenticationToken(username, null, authorities);
+                    return new UsernamePasswordAuthenticationToken(username,null, authList);
+                } else {
+                    return new UsernamePasswordAuthenticationToken(username,null, new ArrayList<>());
                 }
-                else return new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
-
-
             }
         }
         return null;

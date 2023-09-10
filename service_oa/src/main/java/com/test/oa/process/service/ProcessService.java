@@ -4,24 +4,33 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.test.model.process.Process;
+import com.test.vo.process.ApprovalVo;
+import com.test.vo.process.ProcessFormVo;
 import com.test.vo.process.ProcessQueryVo;
 import com.test.vo.process.ProcessVo;
+import java.util.Map;
 
-/**
- * @return
- */
+
 public interface ProcessService extends IService<Process> {
     /**
      * 获取审查列表
-     * @param pageParam
-     * @param processQueryVo
      * @return {@link IPage}<{@link ProcessVo}>
      */
     IPage<ProcessVo> selectPage(Page<ProcessVo> pageParam, ProcessQueryVo processQueryVo);
 
     /**
      * 部署activiti流程
-     * @param deployPath
      */
     void deployByZip(String deployPath);
+
+    /**
+     * 启动流程
+     */
+    void startUp(ProcessFormVo processFormVo);
+
+    IPage<ProcessVo> findPending(Long page,Long size);
+
+    Map<String, Object> show(Long id);
+
+    void approve(ApprovalVo approvalVo);
 }

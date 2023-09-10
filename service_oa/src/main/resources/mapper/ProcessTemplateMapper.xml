@@ -11,6 +11,7 @@
 
     <select id="selectPage" resultType="com.test.model.process.ProcessTemplate">
         SELECT
+        p.id,
         p.`name`,
         p.icon_url,
         p.process_type_id,
@@ -25,5 +26,6 @@
         FROM
         oa_process_template p
         LEFT JOIN	 oa_process_type pty on pty.id = p.process_type_id
+        WHERE p.is_deleted = 0
     </select>
 </mapper>

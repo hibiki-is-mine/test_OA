@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.test.oa.process.mapper.ProcessTypeMapper">
+    <!--Mapper接口和映射文件
+        1.mapper接口的全类名和映射文件namespace保持一致
+        2.mapper接口中的方法的方法名要和映射文件中的sql的id保持一致
+    -->
+    <resultMap id="ProcessTypeTemplate" type="com.test.model.process.ProcessType">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <collection property="processTemplateList" ofType="com.test.model.process.ProcessTemplate">
+            <id column="idTe" property="id"/>
+            <result column="nameTe" property="name"/>
+            <result column="icon_url" property="iconUrl"/>
+            <result column="form_props" property="formProps"/>
+            <result column="form_options" property="formOptions"/>
+            <result column="descriptionTe" property="description"/>
+            <result column="process_definition_key" property="processDefinitionKey"/>
+            <result column="process_definition_path" property="processDefinitionPath"/>
+            <result column="status" property="status"/>
+        </collection>
+    </resultMap>
+    <select id="findProcessType" resultMap="ProcessTypeTemplate">
+        SELECT
+            pty.id,
+            pty.`name`,
+            pty.description,
+            pte.id idTe,
+            pte.`name` nameTe,
+            pte.icon_url,
+            pte.form_props,
+            pte.form_options,
+            pte.description descriptionTe,
+            pte.process_definition_key,
+            pte.process_definition_path,
+            pte.`status`
+        FROM oa_process_type pty
+        LEFT JOIN oa_process_template pte
+        ON pty.id=pte.process_type_id
+    </select>
+</mapper>

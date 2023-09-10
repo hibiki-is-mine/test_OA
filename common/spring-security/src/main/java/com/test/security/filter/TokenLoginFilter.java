@@ -29,12 +29,12 @@ public class TokenLoginFilter  extends UsernamePasswordAuthenticationFilter {
 
     private RedisTemplate redisTemplate;
     //构造方法
-    public TokenLoginFilter(AuthenticationManager authentication
-            ,RedisTemplate redisTemplate){
-        this.setAuthenticationManager(authentication);
+    public TokenLoginFilter(AuthenticationManager authenticationManager,
+                            RedisTemplate redisTemplate) {
+        this.setAuthenticationManager(authenticationManager);
         this.setPostOnly(false);
-        //设置登录接口
-        this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/admin/system/index","POST"));
+        //指定登录接口及提交方式，可以指定任意路径
+        this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/admin/system/index/login","POST"));
         this.redisTemplate = redisTemplate;
     }
 
@@ -45,7 +45,7 @@ public class TokenLoginFilter  extends UsernamePasswordAuthenticationFilter {
      * @param response 响应
      * @return {@link Authentication}
      *///重写登录验证过程
-    @Override
+
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response){
         try {
@@ -61,7 +61,7 @@ public class TokenLoginFilter  extends UsernamePasswordAuthenticationFilter {
         }
     }
     //认证成功的方法
-    @Override
+
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
                                             FilterChain chain,
@@ -83,7 +83,7 @@ public class TokenLoginFilter  extends UsernamePasswordAuthenticationFilter {
         ResponseUtil.out(response, Result.success(map));
     }
     //认证失败的方法
-    @Override
+
     protected void unsuccessfulAuthentication(HttpServletRequest request,
                                               HttpServletResponse response,
                                               AuthenticationException failed)

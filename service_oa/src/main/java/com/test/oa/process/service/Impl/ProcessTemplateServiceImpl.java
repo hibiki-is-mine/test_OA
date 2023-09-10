@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProcessTemplateServiceImpl extends ServiceImpl<ProcessTemplateMapper, ProcessTemplate> implements ProcessTemplateService {
-    @Resource
-    private ProcessTemplateMapper processTemplateMapper;
 
-    @Resource
+    @Autowired
+    private ProcessTemplateMapper processTemplateMapper;
+    @Autowired
     private ProcessTypeService processTypeService;
     @Autowired
     private ProcessService processService;
