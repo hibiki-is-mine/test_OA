@@ -7,6 +7,8 @@ import com.test.oa.auth.mapper.SysRoleMapper;
 import com.test.oa.auth.service.SysMenuService;
 import com.test.oa.auth.service.SysRoleService;
 import com.test.oa.auth.utils.MenuHelper;
+import com.test.oa.wechat.service.MenuService;
+import com.test.vo.wechat.MenuVo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +29,8 @@ public class ServiceTest {
     SysMenuMapper sysMenuMapper;
     @Autowired
     SysMenuService sysMenuService;
+    @Autowired
+    MenuService menuService;
 
     @Test
     public void SysRoleMapperGetAll(){
@@ -55,5 +59,10 @@ public class ServiceTest {
         for (SysMenu m: menuList){
             System.out.println(m);
         }
+    }
+    @Test
+    public void testMenuList(){
+        List<MenuVo> menuInfo = menuService.findMenuInfo();
+        System.out.println(menuInfo);
     }
 }

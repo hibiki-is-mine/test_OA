@@ -43,3 +43,9 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 查看日志
 server:
   port: 8080
+wechat:
+  #微信号: gh_c9c5fedfc32e
+  mpAppId: wxa764fdb5b64c59e0
+  mpAppSecret: 2f373c8c960c6269429aa4997d31b418
+
+

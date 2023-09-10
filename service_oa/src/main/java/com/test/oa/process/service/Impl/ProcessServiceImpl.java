@@ -21,9 +21,12 @@ import com.test.vo.process.ProcessFormVo;
 import com.test.vo.process.ProcessQueryVo;
 import com.test.vo.process.ProcessVo;
 import org.activiti.bpmn.model.*;
+import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.HistoricTaskInstanceQuery;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
@@ -52,6 +55,9 @@ public class ProcessServiceImpl extends ServiceImpl<ProcessMapper, Process> impl
     private TaskService taskService;
     @Autowired
     private ProcessRecordService processRecordService;
+    @Autowired
+    private HistoryService historyService;
+
     @Override
     public IPage<ProcessVo> selectPage(Page<ProcessVo> pageParam, ProcessQueryVo processQueryVo) {
         return baseMapper.selectPage(pageParam,processQueryVo);
@@ -244,6 +250,45 @@ public class ProcessServiceImpl extends ServiceImpl<ProcessMapper, Process> impl
             }
         }
         baseMapper.updateById(process);
+    }
+
+    @Override
+    public IPage<ProcessVo> findProcessed(Long page,Long limit) {
+        //封装查询条件，根据用户的姓名查询已处理任务
+        HistoricTaskInstanceQuery query = historyService.
+                createHistoricTaskInstanceQuery().
+                taskAssignee(LoginUserInfoHelper.getUsername()).
+                finished().
+                orderByTaskCreateTime().
+                desc();
+        //调用方法进行分页查询，返回List集合
+        List<HistoricTaskInstance> list = query.listPage((int) ((page - 1) * limit), Math.toIntExact(limit));
+        long totalCount = query.count();
+        //遍历List集合，封装成processList
+        List<ProcessVo> processList = new ArrayList<>();
+        for (HistoricTaskInstance item : list) {
+            String processInstanceId = item.getProcessInstanceId();//得到流程实例id,processInstanceId
+            Process process = this.getOne(//条件查询，
+                            new LambdaQueryWrapper<Process>().
+                            eq(Process::getProcessInstanceId,
+                            processInstanceId));
+            ProcessVo processVo = new ProcessVo();
+            //将对象属性值复制带processVo中
+            BeanUtils.copyProperties(process, processVo);
+            processVo.setTaskId("0");
+            processList.add(processVo);
+        }
+        //封装成IPage集合
+        IPage<ProcessVo> ipage = new Page<>(page, limit, totalCount);
+        ipage.setRecords(processList);
+        return ipage;
+    }
+
+    @Override
+    public IPage<ProcessVo> findStarted(Page<ProcessVo> pageParam) {
+        ProcessQueryVo processQueryVo = new ProcessQueryVo();
+        processQueryVo.setUserId(LoginUserInfoHelper.getUserId());
+        return baseMapper.selectPage(pageParam, processQueryVo);
     }
 
     private void endTask(String taskId) {

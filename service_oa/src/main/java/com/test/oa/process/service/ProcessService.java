@@ -33,4 +33,8 @@ public interface ProcessService extends IService<Process> {
     Map<String, Object> show(Long id);
 
     void approve(ApprovalVo approvalVo);
+
+    IPage<ProcessVo> findProcessed(Long page,Long limit);
+
+    IPage<ProcessVo> findStarted(Page<ProcessVo> pageParam);
 }
