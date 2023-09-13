@@ -46,6 +46,7 @@ server:
 wechat:
   #微信号: gh_c9c5fedfc32e
   mpAppId: wxa764fdb5b64c59e0
-  mpAppSecret: 2f373c8c960c6269429aa4997d31b418
+  mpAppSecret: 6758a6b9715828f43f8ad6b47c082911
+  userInfoUrl: http://donut.v1.idcfengye.com/admin/wechat/userInfo
 
 

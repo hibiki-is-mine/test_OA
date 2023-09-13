@@ -62,7 +62,7 @@ public class ProcessTemplateServiceImpl extends ServiceImpl<ProcessTemplateMappe
         processTemplate.setStatus(1);
         baseMapper.updateById(processTemplate);
         //调用processService中的deployByZip方法部署流程
-        if (StringUtils.isEmpty(processTemplate.getProcessDefinitionPath())){
+        if (!StringUtils.isEmpty(processTemplate.getProcessDefinitionPath())){
             processService.deployByZip(processTemplate.getProcessDefinitionPath());
         }
 

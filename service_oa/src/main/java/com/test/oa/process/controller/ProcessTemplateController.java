@@ -73,7 +73,7 @@ public class ProcessTemplateController {
         processTemplateService.removeById(id);
         return Result.success();
     }
-    @PreAuthorize("hasAuthority('bnt.processTemplate.templateSet')")
+    //@PreAuthorize("hasAuthority('bnt.processTemplate.templateSet')")
     @ApiOperation(value = "上传流程定义")
     @PostMapping("/uploadProcessDefinition")
     public Result uploadProcessDefinition(MultipartFile file) throws FileNotFoundException {

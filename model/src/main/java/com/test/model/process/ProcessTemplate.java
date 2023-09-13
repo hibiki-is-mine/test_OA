@@ -43,7 +43,7 @@ public class ProcessTemplate extends BaseEntity {
 	@TableField("process_definition_key")
 	private String processDefinitionKey;
 
-	@ApiModelProperty(value = "流程定义上传路process_model_id")
+	@ApiModelProperty(value = "流程定义上传路径")
 	@TableField("process_definition_path")
 	private String processDefinitionPath;
 

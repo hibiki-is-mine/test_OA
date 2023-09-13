@@ -72,6 +72,7 @@ public class TokenLoginFilter  extends UsernamePasswordAuthenticationFilter {
         //生成token
         String token = JwtHelper.createToken(customUser.getSysUser().getId(),
                 customUser.getSysUser().getUsername());
+        System.out.println(token);
 
         //获取当前用户权限数据，放到Redis里面 key：username   value：权限数据
         redisTemplate.opsForValue().set(customUser.getUsername(),

@@ -12,8 +12,9 @@ public enum ResultCodeEnum {
     FAIL(201,"失败"),
     SERVICE_ERROR(2012,"服务异常"),
     DATA_ERROR(204,"数据异常"),
-    LOGIN_AUTH(208,"未登录"),
-    PERMISSION(209,"没有权限"), LOGIN_ERROR(210,"登录错误" );
+    LOGIN_AUTH(210,"未登录"),
+    PERMISSION(209,"没有权限"),
+    LOGIN_ERROR(208,"登录错误" );
     private final Integer code;
     private final String message;
 

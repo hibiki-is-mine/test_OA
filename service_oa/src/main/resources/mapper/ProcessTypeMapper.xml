@@ -41,5 +41,6 @@
         FROM oa_process_type pty
         LEFT JOIN oa_process_template pte
         ON pty.id=pte.process_type_id
+        WHERE pte.is_deleted = 0
     </select>
 </mapper>

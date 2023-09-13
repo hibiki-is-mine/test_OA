@@ -15,6 +15,7 @@ import com.test.oa.process.mapper.ProcessMapper;
 import com.test.oa.process.service.ProcessRecordService;
 import com.test.oa.process.service.ProcessService;
 import com.test.oa.process.service.ProcessTemplateService;
+import com.test.oa.wechat.service.MessageService;
 import com.test.security.custom.LoginUserInfoHelper;
 import com.test.vo.process.ApprovalVo;
 import com.test.vo.process.ProcessFormVo;
@@ -27,6 +28,7 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.history.HistoricTaskInstanceQuery;
+import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
@@ -57,6 +59,8 @@ public class ProcessServiceImpl extends ServiceImpl<ProcessMapper, Process> impl
     private ProcessRecordService processRecordService;
     @Autowired
     private HistoryService historyService;
+    @Autowired
+    private MessageService messageService;
 
     @Override
     public IPage<ProcessVo> selectPage(Page<ProcessVo> pageParam, ProcessQueryVo processQueryVo) {
@@ -65,26 +69,27 @@ public class ProcessServiceImpl extends ServiceImpl<ProcessMapper, Process> impl
 
     @Override
     public void deployByZip(String deployPath) {
-        //通过InputStream获取zip压缩文件
-        InputStream inputStream = this.
-                getClass().
-                getClassLoader().
-                getResourceAsStream(deployPath);
+        // 定义zip输入流
+        InputStream inputStream = this
+                .getClass()
+                .getClassLoader()
+                .getResourceAsStream(deployPath);
+        ZipInputStream zipInputStream = null;
         if (inputStream != null) {
-            ZipInputStream zipInputStream = new ZipInputStream(inputStream);
-            repositoryService.
-                    createDeployment().
-                    addZipInputStream(zipInputStream).
-                    deploy();
+            zipInputStream = new ZipInputStream(inputStream);
         }
-
+        // 流程部署
+        Deployment deployment = repositoryService.createDeployment()
+                .addZipInputStream(zipInputStream)
+                .deploy();
+        System.out.println(deployment.getProjectReleaseVersion());
     }
 
     @Override
     public void startUp(ProcessFormVo processFormVo) {
         //根据当前用户id获取用户信息
         //从LoginUserInfoHelper中获取用户id
-        SysUser user = sysUserService.getById(LoginUserInfoHelper.getUserId());
+        SysUser sysUser = sysUserService.getById(LoginUserInfoHelper.getUserId());
         //根据审批模板id，查询模板信息
         ProcessTemplate processTemplate = processTemplateService.getById(processFormVo.getProcessTemplateId());
         //保存提交的信息至oa_process
@@ -93,9 +98,9 @@ public class ProcessServiceImpl extends ServiceImpl<ProcessMapper, Process> impl
         BeanUtils.copyProperties(processFormVo,process);
         process.setStatus(1);//设置状态码
         process.setProcessCode(String.valueOf(System.currentTimeMillis()));//设置编号
-        process.setUserId(user.getId());
+        process.setUserId(sysUser.getId());
         process.setFormValues(processFormVo.getFormValues());//表单json信息
-        process.setTitle(user.getName()+"发起"+processTemplate.getName()+"申请");//设置标题
+        process.setTitle(sysUser.getName()+"发起"+processTemplate.getName()+"申请");//设置标题
         baseMapper.insert(process);
         //启动流程实例(RuntimeService),包含三个参数
         //流程定义key
@@ -107,17 +112,23 @@ public class ProcessServiceImpl extends ServiceImpl<ProcessMapper, Process> impl
         JSONObject formData = jsonObject.getJSONObject("formData");
         //遍历formData
         Map<String, Object> map = new HashMap<>(formData);
+        for (Map.Entry<String, Object> entry : formData.entrySet()) {
+            map.put(entry.getKey(), entry.getValue());
+        }
+
         //启动流程
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processDefinitionKey, processKey, map);
         //查询下一个审批人
 
         List<Task> taskList = this.getCurrentTaskList(processInstance.getId());
         List<String> nameList = new ArrayList<>();
-        for (Task t:taskList){
-            String assigneeName = t.getAssignee();
-            SysUser userByUserName = sysUserService.getUserByUserName(assigneeName);
-            nameList.add(userByUserName.getName());
-            //TODO 推送审批消息
+        for (Task task:taskList){
+            String assigneeName = task.getAssignee();
+            SysUser user = sysUserService.getUserByUserName(assigneeName);
+            nameList.add(user.getName());
+            //T推送消息给下一个审批人
+            messageService.pushPendingMessage(process.getId(),user.getId(),task.getId());
+
         }
 
         //设置实例id
@@ -131,17 +142,30 @@ public class ProcessServiceImpl extends ServiceImpl<ProcessMapper, Process> impl
 
     }
 
+
+    /**
+     * 获取当前任务列表
+     * @param processInstanceId
+     * @return
+     */
+    private List<Task> getCurrentTaskList(String processInstanceId) {
+        List<Task> tasks = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
+        return tasks;
+    }
+
     @Override
     public IPage<ProcessVo> findPending(Long page,Long size) {
+        String username = LoginUserInfoHelper.getUsername();
         //封装查询条件，根据当前等于用户名称查询
         TaskQuery query = taskService
                 .createTaskQuery()
-                .taskAssignee(LoginUserInfoHelper.getUsername())
+
+                .taskAssignee(username)
                 .orderByTaskCreateTime()
                 .desc();
 
         long totalCount = query.count();
-        int start = Math.toIntExact(page);
+        int start = Math.toIntExact((page-1)*size);
         int s = Math.toIntExact(size);
         List<Task> list = query.listPage(start, s);
         List<ProcessVo> processList = new ArrayList<>();
@@ -204,7 +228,7 @@ public class ProcessServiceImpl extends ServiceImpl<ProcessMapper, Process> impl
     public void approve(ApprovalVo approvalVo) {
         //从ApprovalVo获取taskId
         String taskId = approvalVo.getTaskId();
-        Map<String, Object> tasks = taskService.getVariables(taskId);
+        //Map<String, Object> tasks = taskService.getVariables(taskId);
 
         //判断审批状态值status
         if (approvalVo.getStatus()==1){
@@ -234,13 +258,13 @@ public class ProcessServiceImpl extends ServiceImpl<ProcessMapper, Process> impl
                 String assignee = task.getAssignee();
                 SysUser user = sysUserService.getUserByUserName(assignee);
                 nameList.add(user.getName());
-                //TODO消息推送
+                //推送消息给下一个审批人
+                messageService.pushPendingMessage(process.getId(),user.getId(),task.getId());
             }
             //更新process流程信息
             process.setDescription("等待"+StringUtils.join(nameList.toArray())+"审批");
             process.setStatus(1);
-            //没有下一个审批人
-        }else {
+        }else {//没有下一个审批人
             if (approvalVo.getStatus()==1){
                 process.setDescription("审批通过");
                 process.setStatus(2);
@@ -248,6 +272,8 @@ public class ProcessServiceImpl extends ServiceImpl<ProcessMapper, Process> impl
                 process.setDescription("审批驳回");
                 process.setStatus(-1);
             }
+            //推送消息给发起人
+            messageService.pushProcessedMessage(process.getId(), process.getUserId(), process.getStatus());
         }
         baseMapper.updateById(process);
     }
@@ -329,8 +355,8 @@ public class ProcessServiceImpl extends ServiceImpl<ProcessMapper, Process> impl
 
     }
 
-    private List<Task> getCurrentTaskList(String id) {
+ /*   private List<Task> getCurrentTaskList(String id) {
         return taskService.createTaskQuery().processInstanceId(id).list();
-    }
+    }*/
 
 }

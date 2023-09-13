@@ -1,5 +1,6 @@
 package com.test.oa;
 
+import com.alibaba.fastjson.JSONObject;
 import com.test.model.system.SysMenu;
 import com.test.model.system.SysRole;
 import com.test.oa.auth.mapper.SysMenuMapper;
@@ -9,6 +10,7 @@ import com.test.oa.auth.service.SysRoleService;
 import com.test.oa.auth.utils.MenuHelper;
 import com.test.oa.wechat.service.MenuService;
 import com.test.vo.wechat.MenuVo;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +33,7 @@ public class ServiceTest {
     SysMenuService sysMenuService;
     @Autowired
     MenuService menuService;
+
 
     @Test
     public void SysRoleMapperGetAll(){
@@ -62,7 +65,11 @@ public class ServiceTest {
     }
     @Test
     public void testMenuList(){
-        List<MenuVo> menuInfo = menuService.findMenuInfo();
-        System.out.println(menuInfo);
+
+        //JSONObject jsonObject = menuService.syncMenu();
+        //System.out.println(jsonObject);
+        //List<MenuVo> menuInfo = menuService.findMenuInfo();
+        //System.out.println(menuInfo);
     }
+
 }

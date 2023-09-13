@@ -21,7 +21,7 @@ import java.util.Map;
 @Api(tags = "审批流程管理")
 @RestController
 @RequestMapping("/admin/process")
-@CrossOrigin//允许跨域
+//@CrossOrigin//允许跨域
 public class ProcessControllerEmp {
     @Autowired
     private ProcessTypeService processTypeService;
@@ -44,7 +44,7 @@ public class ProcessControllerEmp {
         return Result.success(processTemplateService.getById(processTemplateId));
     }
     @ApiOperation("启动流程")
-    @PostMapping("/starUp")
+    @PostMapping("/startUp")
     public Result start(@RequestBody ProcessFormVo processFormVo){
         processService.startUp(processFormVo);
         return Result.success();

@@ -52,4 +52,17 @@ public class MenuController {
     public Result findMenuInfo() {
         return Result.success(menuService.findMenuInfo());
     }
+
+    @ApiOperation(value = "推送菜单至微信")
+    @GetMapping("syncMenu")
+    public Result createMenu(){
+        menuService.syncMenu();
+        return Result.success();
+    }
+    @ApiOperation(value = "删除已推送菜单")
+    @DeleteMapping("removeMenu")
+    public Result removeMenu(){
+        menuService.removeMenu();
+        return Result.success();
+    }
 }
