@@ -7,11 +7,13 @@ import com.test.model.system.SysRoleMenu;
 import com.test.oa.auth.mapper.SysMenuMapper;
 import com.test.oa.auth.mapper.SysRoleMenuMapper;
 import com.test.oa.auth.service.SysMenuService;
+import com.test.oa.auth.service.SysRoleMenuService;
 import com.test.oa.auth.utils.MenuHelper;
 import com.test.vo.system.AssginMenuVo;
 import com.test.vo.system.RouterVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -23,7 +25,9 @@ import java.util.stream.Collectors;
 @Service
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> implements SysMenuService {
     @Autowired
-    SysRoleMenuMapper sysRoleMenuMapper;
+    private SysRoleMenuMapper sysRoleMenuMapper;
+    @Autowired
+    private SysRoleMenuService sysRoleMenuService;
     @Override
     public List<SysMenu> findNodes() {
         //查询所有数据
@@ -36,18 +40,43 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         LambdaQueryWrapper<SysMenu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SysMenu::getParentId,id);
         Integer count = baseMapper.selectCount(wrapper);
+        if (count==0){
+            baseMapper.deleteById(id);
+        }
         return count <= 0;
     }
 
     @Override
     public List<SysMenu> getMenusByRoleId(Long roleId) {
-        List<Long> menuIdList = sysRoleMenuMapper.selectByRoleId(roleId);
 
-        LambdaQueryWrapper<SysMenu> wrapper = new LambdaQueryWrapper<>();
-        wrapper.in(SysMenu::getId,menuIdList);
-        List<SysMenu> sysMenuList = baseMapper.selectList(wrapper);
+        //查询所有菜单，添加条件状态值status=1
+        LambdaQueryWrapper<SysMenu> wrapperSysMenu = new LambdaQueryWrapper<>();
+        wrapperSysMenu.eq(SysMenu::getStatus,1);
+        List<SysMenu> allSysMenuList = baseMapper.selectList(wrapperSysMenu);
 
-        return MenuHelper.buildTree(sysMenuList);
+        //根据角色id roleId查询 角色菜单关系表里面 角色id对应所有的菜单id
+        LambdaQueryWrapper<SysRoleMenu> wrapperSysRoleMenu = new LambdaQueryWrapper<>();
+        wrapperSysRoleMenu.eq(SysRoleMenu::getRoleId,roleId);
+        List<SysRoleMenu> sysRoleMenuList = sysRoleMenuService.list(wrapperSysRoleMenu);
+
+        //使用流根据获取菜单id，获取对应菜单对象
+        List<Long> menuIdList = sysRoleMenuList.
+                stream().
+                map(SysRoleMenu::getMenuId).
+                collect(Collectors.toList());
+
+        //拿着菜单id 和所有菜单集合里面id进行比较，如果相同封装
+        allSysMenuList.stream().forEach(item -> {
+            if(menuIdList.contains(item.getId())) {
+                item.setSelect(true);
+            } else {
+                item.setSelect(false);
+            }
+        });
+
+        //返回规定树形显示格式菜单列表
+        List<SysMenu> sysMenuList = MenuHelper.buildTree(allSysMenuList);
+        return sysMenuList;
     }
     //为角色分配Menu
     @Override
@@ -122,9 +151,17 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
                 .filter(item -> item.getType()==2)
                 .map(SysMenu::getPerms)
                 .collect(Collectors.toList());
-
-
         return permsList;
     }
+
+/*    @Override
+    public boolean updateMenu(SysMenu sysMenu) {
+        //获取判断当前修改的菜单是否具有子菜单
+        List<SysMenu> sysMenuList = baseMapper.selectList(new LambdaQueryWrapper<SysMenu>().eq(SysMenu::getParentId, sysMenu.getId()));
+        if(CollectionUtils.isEmpty(sysMenuList)){//如果是空说明没有子节点
+
+        }
+
+    }*/
 
 }

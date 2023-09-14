@@ -24,4 +24,6 @@ public interface SysMenuService extends IService<SysMenu> {
     List<RouterVo> findUserMenuListByUserId(Long userId);
 
     List<String> findUserPermsByUserId(Long userId);
+
+    //boolean updateMenu(SysMenu sysMenu);
 }

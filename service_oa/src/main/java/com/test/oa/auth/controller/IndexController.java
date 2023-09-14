@@ -79,19 +79,16 @@ public class IndexController {
         map.put("avatar","https://oss.aliyuncs.com/aliyun_id_photo_bucket/default_handsome.jpg");
         return Result.success(map);*/
         Map<String,Object> map = new HashMap<>();
-
         //从token中获取用户id
         Long userId = JwtHelper.getUserId(token);
         String username = JwtHelper.getUsername(token);
-
         //根据用户id查询数据库，获取用户信息
-        SysUser user = sysUserService.getById(userId);
+        //SysUser user = sysUserService.getById(userId);
 
         //根据用户id获取用户可以操作的菜单列表，动态创建路由结构进行显示
         List<RouterVo> routerList= sysMenuService.findUserMenuListByUserId(userId);
         //根据用户id获取用户可以操作的按键列表
         List<String> permsList = sysMenuService.findUserPermsByUserId(userId);
-
 
         map.put("name",username);
         //返回用户可以操作的菜单

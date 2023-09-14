@@ -44,7 +44,7 @@ public class SysMenuController {
         }else return Result.fail();
     }
     @ApiOperation("删除")
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("remove/{id}")
     public Result delete(@PathVariable Long id){
         boolean is_success = sysMenuService.deleteById(id);
         if (is_success){

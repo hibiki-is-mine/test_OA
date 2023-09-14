@@ -33,8 +33,10 @@ public class MenuHelper {
                 rootList.add(sysMenu);
             } else {
                 SysMenu parent = map.get(sysMenu.getParentId());
-                List<SysMenu> children = parent.getChildren();
-                children.add(sysMenu);
+                if (parent!=null) {
+                    List<SysMenu> children = parent.getChildren();
+                    children.add(sysMenu);
+                }
             }
         }
         return rootList;
@@ -54,7 +56,6 @@ public class MenuHelper {
             router.setMeta(new MetaVo(menu.getName(),menu.getIcon()));
             //封装下一层数据
             List<SysMenu> children = menu.getChildren();
-
             //判断菜单类型中是否会包含隐藏路由
             if (menu.getType()==1){
                 List<SysMenu> menuList = children
@@ -76,19 +77,17 @@ public class MenuHelper {
                     router.setAlwaysShow(true);
                     router.setChildren(buildRouter(children));
                 }
-
             }
             routerList.add(router);
         }
         return routerList;
     }
 
-    /**
+/*    *//**
      * 构建路由器
      *
-     * @param menus 菜单
      * @return {@link List}<{@link RouterVo}>
-     */
+     *//*
     public static List<RouterVo> buildRouter2(List<SysMenu> menus) {
         //创建list集合
         List<RouterVo> routers = new LinkedList<RouterVo>();
@@ -124,7 +123,7 @@ public class MenuHelper {
             routers.add(router);
         }
         return routers;
-    }
+    }*/
 
     public static String getPath(SysMenu menu){
         String routerPath="/"+menu.getPath();

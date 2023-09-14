@@ -89,7 +89,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
                         view.put("url", "http://refrain.v1.idcfengye.com#"+twoMenuVo.getUrl());
                     } else {
                         view.put("name", twoMenuVo.getName());
-                        view.put("key", twoMenuVo.getMeunKey());
+                        view.put("key", twoMenuVo.getMenuKey());
                     }
                     subButton.add(view);
                 }

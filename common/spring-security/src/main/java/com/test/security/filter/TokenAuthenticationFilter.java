@@ -32,6 +32,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
+     * 用于对请求进行JWT（JSON Web Token）的验证和授权
      * @param request
      * @param response
      * @param chain

@@ -41,7 +41,6 @@ public class MessageServiceImpl  implements MessageService {
     @Autowired
     private WxMpService wxMpService;
 
-
     @Override
     public void pushPendingMessage(Long processId, Long userId, String taskId) {
         //查询流程信息
@@ -94,9 +93,7 @@ public class MessageServiceImpl  implements MessageService {
         SysUser sysUser = sysUserService.getById(userId);
         SysUser currentSysUser = sysUserService.getById(LoginUserInfoHelper.getUserId());
         String openid = sysUser.getOpenId();
-        if(StringUtils.isEmpty(openid)) {
-            openid = "omwf25izKON9dktgoy0dogqvnGhk";
-        }
+
         WxMpTemplateMessage templateMessage = WxMpTemplateMessage.builder()
                 .toUser(openid)//要推送的用户openid
                 .templateId(MODEL_ID_2)//模板id

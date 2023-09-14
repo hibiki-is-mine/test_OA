@@ -27,7 +27,7 @@ public class MenuVo {
     private String url;
 
     @ApiModelProperty(value = "菜单key")
-    private String meunKey;
+    private String menuKey;
 
     @ApiModelProperty(value = "排序")
     private Integer sort;

@@ -26,8 +26,8 @@ public class Menu extends BaseEntity {
     private String url;
 
     @ApiModelProperty(value = "菜单KEY值，用于消息接口推送")
-    @TableField("meun_key")
-    private String meunKey;
+    @TableField("menu_key")
+    private String menuKey;
 
     @ApiModelProperty(value = "排序")
     private Integer sort;
